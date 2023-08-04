@@ -2,11 +2,14 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
+  NotImplementedException,
+  Param,
   Post,
 } from '@nestjs/common';
-import { User } from './contracts';
+import { GetUserParams, User } from './contracts';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -22,5 +25,11 @@ export class UsersController {
 
     const createdUser = await this.userService.save(user);
     return createdUser;
+  }
+
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  async getUserById(@Param() params: GetUserParams): Promise<User> {
+    throw new NotImplementedException();
   }
 }

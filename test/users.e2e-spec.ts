@@ -33,6 +33,22 @@ describe('Users Controller (e2e)', () => {
     expect(Date.parse(response.body.createdAt)).not.toBeNaN();
   });
 
+  it('/api/users/:id (GET)', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/api/users/1')
+      .expect(200);
+
+    expect(response).toBe(
+      expect.objectContaining({
+        id: expect.any(String),
+        name: expect.any(String),
+        job: expect.any(String),
+        createdAt: expect.any(String),
+      }),
+    );
+    expect(Date.parse(response.body.createdAt)).not.toBeNaN();
+  });
+
   afterAll(async () => {
     await app.close();
   });

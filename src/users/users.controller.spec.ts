@@ -45,9 +45,14 @@ describe('UsersController', () => {
     expect(result.createdAt).toBeInstanceOf(Date);
   });
 
-  it('should fail on missing required values', () => {
+  it('should fail to create on missing required values', () => {
     expect(() => controller.createUser({ name: '' })).rejects.toThrow(
       BadRequestException,
     );
+  });
+
+  it('should correctly get a user by id', async () => {
+    const user = await controller.getUserById({ id: 1 });
+    expect(user.id).toBe(1);
   });
 });
