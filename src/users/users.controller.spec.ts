@@ -3,6 +3,7 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { BadRequestException } from '@nestjs/common';
 import { User } from './contracts';
+import { ReqresService } from '../reqres/reqres.service';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -18,6 +19,19 @@ describe('UsersController', () => {
                 id: 1,
                 createdAt: new Date(),
                 ...user,
+              };
+            },
+          },
+        },
+        {
+          provide: ReqresService,
+          useValue: {
+            getUserById(id: number) {
+              return {
+                id,
+                name: 'John',
+                job: 'Doe',
+                createdAt: new Date(),
               };
             },
           },

@@ -13,7 +13,7 @@ export class User {
   @Prop()
   job?: string;
 
-  createdAt: Date;
+  createdAt?: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

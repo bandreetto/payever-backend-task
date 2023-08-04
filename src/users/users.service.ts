@@ -9,7 +9,7 @@ export class UsersService {
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
-  async save(userFields: Omit<User, 'id' | 'createdAt'>): Promise<User> {
+  async save(userFields: Omit<User, 'id'>): Promise<User> {
     const user = await this.userModel.create(userFields);
     return {
       id: user._id.toString(),

@@ -8,7 +8,7 @@ import { ReqresModule } from './reqres/reqres.module';
   imports: [
     UsersModule,
     ConfigModule.forRoot({
-      envFilePath: process.env.NODE_ENV === 'test' ? '.e2e.env' : '.env',
+      envFilePath: process.env.NODE_ENV === 'test' ? '.test.env' : '.env',
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],

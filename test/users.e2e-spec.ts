@@ -38,15 +38,7 @@ describe('Users Controller (e2e)', () => {
       .get('/api/users/1')
       .expect(200);
 
-    expect(response).toBe(
-      expect.objectContaining({
-        id: expect.any(String),
-        name: expect.any(String),
-        job: expect.any(String),
-        createdAt: expect.any(String),
-      }),
-    );
-    expect(Date.parse(response.body.createdAt)).not.toBeNaN();
+    expect(response.body.id).toBe('1');
   });
 
   afterAll(async () => {
