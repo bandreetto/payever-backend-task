@@ -1,12 +1,28 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
+import { BadRequestException } from '@nestjs/common';
+import { User } from './contracts';
 
 describe('UsersController', () => {
   let controller: UsersController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        {
+          provide: UsersService,
+          useValue: {
+            save(user: User) {
+              return {
+                id: 1,
+                createdAt: new Date(),
+                ...user,
+              };
+            },
+          },
+        },
+      ],
       controllers: [UsersController],
     }).compile();
 
@@ -27,5 +43,11 @@ describe('UsersController', () => {
     expect(result.name).toBe(user.name);
     expect(result.job).toBe(user.job);
     expect(result.createdAt).toBeInstanceOf(Date);
+  });
+
+  it('should fail on missing required values', () => {
+    expect(() => controller.createUser({ name: '' })).rejects.toThrow(
+      BadRequestException,
+    );
   });
 });
