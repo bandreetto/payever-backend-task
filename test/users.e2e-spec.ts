@@ -26,7 +26,7 @@ describe('Users Controller (e2e)', () => {
       .send(user)
       .expect(201);
 
-    expect(typeof response.body.id).toBe('number');
+    expect(typeof response.body.id).toBe('string');
     expect(response.body.name).toBe('morpheus');
     expect(response.body.job).toBe('leader');
     expect(response.body.createdAt).toBeInstanceOf(Date);

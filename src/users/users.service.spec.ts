@@ -1,11 +1,28 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
+import { MongooseModule } from '@nestjs/mongoose';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import { User, UserSchema } from './contracts';
+import mongoose from 'mongoose';
 
 describe('UsersService', () => {
   let service: UsersService;
+  let mongoServer: MongoMemoryServer;
+  let module: TestingModule;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    module = await Test.createTestingModule({
+      imports: [
+        MongooseModule.forRootAsync({
+          useFactory: async () => {
+            mongoServer = await MongoMemoryServer.create();
+            return {
+              uri: mongoServer.getUri(),
+            };
+          },
+        }),
+        MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+      ],
       providers: [UsersService],
     }).compile();
 
@@ -28,5 +45,11 @@ describe('UsersService', () => {
     expect(created.name).toBe(user.name);
     expect(created.job).toBe(user.job);
     expect(created).toEqual(retrieved);
+  });
+
+  afterAll(async () => {
+    await mongoose.connection.close();
+    await mongoose.disconnect();
+    await mongoServer.stop();
   });
 });
