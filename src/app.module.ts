@@ -6,10 +6,17 @@ import { MongooseModule } from '@nestjs/mongoose';
 @Module({
   imports: [
     UsersModule,
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      envFilePath: process.env.NODE_ENV === 'test' ? '.e2e.env' : '.env',
+    }),
     MongooseModule.forRootAsync({
-      useFactory: (configService: ConfigService) =>
-        configService.get('MONGOOSE_URI'),
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        return {
+          uri: configService.get('MONGO_URI'),
+        };
+      },
     }),
   ],
 })

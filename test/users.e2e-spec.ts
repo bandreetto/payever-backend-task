@@ -12,6 +12,7 @@ describe('Users Controller (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.setGlobalPrefix('api');
     await app.init();
   });
 
@@ -29,6 +30,10 @@ describe('Users Controller (e2e)', () => {
     expect(typeof response.body.id).toBe('string');
     expect(response.body.name).toBe('morpheus');
     expect(response.body.job).toBe('leader');
-    expect(response.body.createdAt).toBeInstanceOf(Date);
+    expect(Date.parse(response.body.createdAt)).not.toBeNaN();
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 });
