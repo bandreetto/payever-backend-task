@@ -4,9 +4,12 @@ import { UsersService } from './users.service';
 import { BadRequestException } from '@nestjs/common';
 import { User } from './contracts';
 import { ReqresService } from '../reqres/reqres.service';
+import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
+import { UserEvents } from './contracts/enums';
 
 describe('UsersController', () => {
   let controller: UsersController;
+  const publish = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -34,6 +37,12 @@ describe('UsersController', () => {
                 createdAt: new Date(),
               };
             },
+          },
+        },
+        {
+          provide: AmqpConnection,
+          useValue: {
+            publish,
           },
         },
       ],
@@ -68,5 +77,18 @@ describe('UsersController', () => {
   it('should correctly get a user by id', async () => {
     const user = await controller.getUserById({ id: 1 });
     expect(user.id).toBe(1);
+  });
+
+  it('should publish user created message after creating a user', async () => {
+    const user = {
+      name: 'morpheus',
+      job: 'leader',
+    };
+    const createdUser = await controller.createUser(user);
+    expect(publish).toHaveBeenCalledWith(
+      'payever',
+      UserEvents.UserCreated,
+      createdUser,
+    );
   });
 });
