@@ -7,7 +7,6 @@ import {
   HttpCode,
   HttpStatus,
   NotFoundException,
-  NotImplementedException,
   Param,
   Post,
   UploadedFile,
