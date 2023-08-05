@@ -66,7 +66,7 @@ describe('Users Controller (e2e)', () => {
     const avatarPromise = new Promise<string>(
       (resolve) => (resolveAvatar = resolve),
     );
-    readFile('resources/NeoTheMatrix.jpg', async (err, data) => {
+    readFile(__dirname + '/resources/NeoTheMatrix.jpg', async (err, data) => {
       if (err) throw err;
 
       const avatar = data.toString('base64');

@@ -5,7 +5,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  NotImplementedException,
   Param,
   Post,
   UploadedFile,
@@ -17,6 +16,7 @@ import { ReqresService } from '../reqres/reqres.service';
 import { MessagingService } from '../messaging/messaging.service';
 import { Topic } from '../messaging/contracts/enums';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { AvatarService } from './avatar/avatar.service';
 
 @Controller('users')
 export class UsersController {
@@ -24,6 +24,7 @@ export class UsersController {
     private readonly userService: UsersService,
     private readonly reqresService: ReqresService,
     private readonly messagingService: MessagingService,
+    private readonly avatarService: AvatarService,
   ) {}
 
   @Post()
@@ -48,8 +49,17 @@ export class UsersController {
   @Post(':id/avatar')
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor('avatar'))
-  uploadAvatar(@UploadedFile() avatar: Express.Multer.File) {
-    console.log(avatar);
-    throw new NotImplementedException();
+  uploadAvatar(
+    @Param() params: GetUserParams,
+    @UploadedFile() avatar: Express.Multer.File,
+  ): Promise<void> {
+    return this.avatarService.save(params.id, avatar.buffer);
+  }
+
+  @Get(':id/avatar')
+  @HttpCode(HttpStatus.OK)
+  async getAvatar(@Param() params: GetUserParams): Promise<string> {
+    const avatar = await this.avatarService.findByUserId(params.id);
+    return avatar.toString('base64');
   }
 }

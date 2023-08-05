@@ -32,7 +32,7 @@ describe('ReqresService', () => {
 
   // there is a bug with jest + axios causing circular json
   it.skip('should fetch a user from reqres', async () => {
-    const user = await service.getUserById(1);
+    const user = await service.getUserById('1');
     expect(user.id).toBe('1');
   });
 });

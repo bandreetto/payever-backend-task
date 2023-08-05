@@ -1,3 +1,3 @@
 export interface GetUserParams {
-  id: number;
+  id: string;
 }

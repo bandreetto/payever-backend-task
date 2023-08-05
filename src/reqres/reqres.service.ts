@@ -7,7 +7,7 @@ import { User } from 'src/users/contracts';
 export class ReqresService {
   constructor(private readonly httpService: HttpService) {}
 
-  async getUserById(id: number): Promise<User> {
+  async getUserById(id: string): Promise<User> {
     const response = await firstValueFrom(this.httpService.get(`/users/${id}`));
     return {
       ...response.data.data,

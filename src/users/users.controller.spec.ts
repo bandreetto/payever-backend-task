@@ -6,6 +6,7 @@ import { User } from './contracts';
 import { ReqresService } from '../reqres/reqres.service';
 import { Topic } from '../messaging/contracts/enums';
 import { MessagingService } from '../messaging/messaging.service';
+import { AvatarService } from './avatar/avatar.service';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -45,6 +46,7 @@ describe('UsersController', () => {
             publish,
           },
         },
+        { provide: AvatarService, useValue: {} },
       ],
       controllers: [UsersController],
     }).compile();
@@ -79,8 +81,8 @@ describe('UsersController', () => {
   });
 
   it('should correctly get a user by id', async () => {
-    const user = await controller.getUserById({ id: 1 });
-    expect(user.id).toBe(1);
+    const user = await controller.getUserById({ id: '1' });
+    expect(user.id).toBe('1');
   });
 
   it('should publish user created message after creating a user', async () => {

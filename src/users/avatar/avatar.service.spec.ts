@@ -3,6 +3,7 @@ import { AvatarService } from './avatar.service';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { MongooseModule } from '@nestjs/mongoose';
 import { readFile } from 'fs';
+import mongoose from 'mongoose';
 
 describe('AvatarService', () => {
   let service: AvatarService;
@@ -44,8 +45,9 @@ describe('AvatarService', () => {
       },
     );
     const avatar = await avatarPromise;
-    await service.save('user-id', avatar);
-    const savedAvatar = await service.findByUserId('user-id');
+    const userId = new mongoose.Types.ObjectId().toString();
+    await service.save(userId, avatar);
+    const savedAvatar = await service.findByUserId(userId);
     expect(savedAvatar).toEqual(avatar);
   });
 });

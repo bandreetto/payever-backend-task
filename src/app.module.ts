@@ -5,7 +5,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ReqresModule } from './reqres/reqres.module';
 import { MailerModule } from './mailer/mailer.module';
 import { MessagingModule } from './messaging/messaging.module';
-import { AvatarService } from './user/avatar/avatar.service';
 
 @Module({
   imports: [
