@@ -3,7 +3,7 @@ import { MailerService } from './mailer.service';
 import { createNewUserMessage } from './mailer.logic';
 import { Queue, Topic, TopicPayload } from '../messaging/contracts/enums';
 import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
-import { EXCHANGE } from 'src/messaging/contracts/consts';
+import { EXCHANGE } from '../messaging/contracts/consts';
 
 @Injectable()
 export class MailerConsumer {
@@ -16,6 +16,10 @@ export class MailerConsumer {
   })
   sendNewUserEmail(payload: TopicPayload[Topic.UserCreated]): Promise<void> {
     const greetMessage = createNewUserMessage(payload);
-    return this.mailerService.sendMail(payload.email, greetMessage);
+    return this.mailerService.sendMail(
+      payload.email,
+      'Greetings',
+      greetMessage,
+    );
   }
 }

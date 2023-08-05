@@ -15,7 +15,7 @@ describe('MailerConsumer', () => {
         {
           provide: MailerService,
           useValue: {
-            sendNewUserEmail: sendMail,
+            sendMail,
           },
         },
       ],
@@ -39,6 +39,7 @@ describe('MailerConsumer', () => {
     await consumer.sendNewUserEmail(user);
     expect(sendMail).toHaveBeenCalledWith(
       user.email,
+      'Greetings',
       createNewUserMessage(user),
     );
   });
