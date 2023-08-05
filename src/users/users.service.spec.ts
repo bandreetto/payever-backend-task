@@ -36,6 +36,7 @@ describe('UsersService', () => {
   it('should correclty save a user', async () => {
     const user = {
       name: 'morpheus',
+      email: 'morpheus@matrix.com',
       job: 'leader',
     };
 

@@ -24,6 +24,7 @@ describe('Mailer (e2e)', () => {
 
     const user = {
       name: 'morpheus',
+      email: 'morpheus@matrix.com',
       job: 'leader',
     };
 

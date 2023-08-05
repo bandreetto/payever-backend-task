@@ -19,6 +19,7 @@ describe('Users Controller (e2e)', () => {
   it('/api/users (POST)', async () => {
     const user = {
       name: 'morpheus',
+      email: 'morpheus@matrix.com',
       job: 'leader',
     };
 

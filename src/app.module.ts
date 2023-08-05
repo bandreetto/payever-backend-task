@@ -4,7 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ReqresModule } from './reqres/reqres.module';
 import { MailerModule } from './mailer/mailer.module';
-import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
+import { MessagingModule } from './messaging/messaging.module';
 
 @Module({
   imports: [
@@ -21,21 +21,9 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
         };
       },
     }),
-    RabbitMQModule.forRootAsync(RabbitMQModule, {
-      useFactory: (configService: ConfigService) => {
-        return {
-          exchanges: [
-            {
-              name: 'payever',
-              type: 'topic',
-            },
-          ],
-          uri: configService.get('RABBITMQ_URI'),
-        };
-      },
-    }),
     ReqresModule,
     MailerModule,
+    MessagingModule,
   ],
 })
 export class AppModule {}

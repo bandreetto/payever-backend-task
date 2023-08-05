@@ -11,25 +11,27 @@ import {
 import { GetUserParams, User } from './contracts';
 import { UsersService } from './users.service';
 import { ReqresService } from '../reqres/reqres.service';
-import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
-import { UserEvents } from './contracts/enums';
+import { MessagingService } from '../messaging/messaging.service';
+import { Topic } from '../messaging/contracts/enums';
 
 @Controller('users')
 export class UsersController {
   constructor(
     private readonly userService: UsersService,
     private readonly reqresService: ReqresService,
-    private readonly amqpConnection: AmqpConnection,
+    private readonly messagingService: MessagingService,
   ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createUser(@Body() user: Omit<User, 'id'>): Promise<User> {
     if (!user.name) throw new BadRequestException();
+    if (!user.email) throw new BadRequestException();
 
     const createdUser = await this.userService.save(user);
 
-    this.amqpConnection.publish('payever', UserEvents.UserCreated, createdUser);
+    this.messagingService.publish(Topic.UserCreated, createdUser);
+
     return createdUser;
   }
 

@@ -4,8 +4,8 @@ import { UsersService } from './users.service';
 import { BadRequestException } from '@nestjs/common';
 import { User } from './contracts';
 import { ReqresService } from '../reqres/reqres.service';
-import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
-import { UserEvents } from './contracts/enums';
+import { Topic } from '../messaging/contracts/enums';
+import { MessagingService } from '../messaging/messaging.service';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -40,7 +40,7 @@ describe('UsersController', () => {
           },
         },
         {
-          provide: AmqpConnection,
+          provide: MessagingService,
           useValue: {
             publish,
           },
@@ -59,6 +59,7 @@ describe('UsersController', () => {
   it('should correclty create a user', async () => {
     const user = {
       name: 'morpheus',
+      email: 'morpheus@matrix.com',
       job: 'leader',
     };
     const result = await controller.createUser(user);
@@ -69,9 +70,12 @@ describe('UsersController', () => {
   });
 
   it('should fail to create on missing required values', () => {
-    expect(() => controller.createUser({ name: '' })).rejects.toThrow(
-      BadRequestException,
-    );
+    expect(() =>
+      controller.createUser({ email: 'morpheus@matric.com' } as any),
+    ).rejects.toThrow(BadRequestException);
+    expect(() =>
+      controller.createUser({ name: 'morpheus' } as any),
+    ).rejects.toThrow(BadRequestException);
   });
 
   it('should correctly get a user by id', async () => {
@@ -82,13 +86,10 @@ describe('UsersController', () => {
   it('should publish user created message after creating a user', async () => {
     const user = {
       name: 'morpheus',
+      email: 'morpheus@matrix.com',
       job: 'leader',
     };
     const createdUser = await controller.createUser(user);
-    expect(publish).toHaveBeenCalledWith(
-      'payever',
-      UserEvents.UserCreated,
-      createdUser,
-    );
+    expect(publish).toHaveBeenCalledWith(Topic.UserCreated, createdUser);
   });
 });
