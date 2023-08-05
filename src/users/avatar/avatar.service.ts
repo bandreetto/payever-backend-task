@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotImplementedException } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
 import mongoose, { Connection } from 'mongoose';
 
@@ -37,5 +37,9 @@ export class AvatarService {
     readStream.on('data', (data) => chunks.push(data));
     await downloadPromise;
     return Buffer.concat(chunks);
+  }
+
+  async deleteByUserId(userId: string): Promise<void> {
+    throw new NotImplementedException();
   }
 }

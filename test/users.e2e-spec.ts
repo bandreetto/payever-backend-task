@@ -43,7 +43,7 @@ describe('Users Controller (e2e)', () => {
     expect(response.body.id).toBe('1');
   });
 
-  it('/api/users/:id/avatar (POST)', async () => {
+  it('/api/users/:id/avatar (POST/GET/DELETE)', async () => {
     const user = {
       name: 'neo',
       email: 'neo@matrix.com',
@@ -78,6 +78,14 @@ describe('Users Controller (e2e)', () => {
       .get(`/api/users/${id}/avatar`)
       .expect(200)
       .expect(avatar);
+
+    await request(app.getHttpServer())
+      .delete(`/api/users/${id}/avatar`)
+      .expect(200);
+
+    await request(app.getHttpServer())
+      .get(`/api/users/${id}/avatar`)
+      .expect(404);
   });
 
   afterAll(async () => {

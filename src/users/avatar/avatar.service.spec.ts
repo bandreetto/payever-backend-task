@@ -50,4 +50,25 @@ describe('AvatarService', () => {
     const savedAvatar = await service.findByUserId(userId);
     expect(savedAvatar).toEqual(avatar);
   });
+
+  it('should correctly delete an avatar from the db', async () => {
+    let resolveAvatar: (avatar: Buffer) => void;
+    const avatarPromise = new Promise<Buffer>(
+      (resolve) => (resolveAvatar = resolve),
+    );
+    readFile(
+      __dirname + '/../../../test/resources/NeoTheMatrix.jpg',
+      async (err, data) => {
+        if (err) throw err;
+
+        resolveAvatar(data);
+      },
+    );
+    const avatar = await avatarPromise;
+    const userId = new mongoose.Types.ObjectId().toString();
+    await service.save(userId, avatar);
+    await service.deleteByUserId(userId);
+    const deletedAvatar = await service.findByUserId(userId);
+    expect(deletedAvatar).toBe(null);
+  });
 });

@@ -2,9 +2,11 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
+  NotImplementedException,
   Param,
   Post,
   UploadedFile,
@@ -61,5 +63,11 @@ export class UsersController {
   async getAvatar(@Param() params: GetUserParams): Promise<string> {
     const avatar = await this.avatarService.findByUserId(params.id);
     return avatar.toString('base64');
+  }
+
+  @Delete(':id/avatar')
+  @HttpCode(HttpStatus.OK)
+  async deleteAvatar(@Param() params: GetUserParams): Promise<string> {
+    throw new NotImplementedException();
   }
 }
