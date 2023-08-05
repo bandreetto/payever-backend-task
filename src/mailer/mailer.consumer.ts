@@ -1,12 +1,21 @@
-import { Injectable, NotImplementedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { MailerService } from './mailer.service';
-import { User } from 'src/users/contracts';
+import { createNewUserMessage } from './mailer.logic';
+import { Queue, Topic, TopicPayload } from '../messaging/contracts/enums';
+import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
+import { EXCHANGE } from 'src/messaging/contracts/consts';
 
 @Injectable()
 export class MailerConsumer {
   constructor(private readonly mailerService: MailerService) {}
 
-  sendNewUserEmail(payload: User): Promise<void> {
-    throw new NotImplementedException();
+  @RabbitSubscribe({
+    exchange: EXCHANGE,
+    routingKey: Topic.UserCreated,
+    queue: Queue.GreetNewUser,
+  })
+  sendNewUserEmail(payload: TopicPayload[Topic.UserCreated]): Promise<void> {
+    const greetMessage = createNewUserMessage(payload);
+    return this.mailerService.sendMail(payload.email, greetMessage);
   }
 }

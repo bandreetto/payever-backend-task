@@ -7,7 +7,7 @@ services:
       - ./mongo-volume:/data/db
 
   rabbit:
-    image: rabbitmq
+    image: rabbitmq:3-management
     hostname: rabbit-dev
     ports:
       - '5672:5672'

@@ -7,3 +7,7 @@ export enum Topic {
 export type TopicPayload = {
   [Topic.UserCreated]: User;
 };
+
+export enum Queue {
+  GreetNewUser = 'user:greetNewUser',
+}

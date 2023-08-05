@@ -6,7 +6,7 @@ import { createNewUserMessage } from './mailer.logic';
 
 describe('MailerConsumer', () => {
   let consumer: MailerConsumer;
-  const sendNewUserEmail = jest.fn();
+  const sendMail = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -15,7 +15,7 @@ describe('MailerConsumer', () => {
         {
           provide: MailerService,
           useValue: {
-            sendNewUserEmail,
+            sendNewUserEmail: sendMail,
           },
         },
       ],
@@ -37,7 +37,7 @@ describe('MailerConsumer', () => {
       createdAt: new Date(),
     };
     await consumer.sendNewUserEmail(user);
-    expect(sendNewUserEmail).toHaveBeenCalledWith(
+    expect(sendMail).toHaveBeenCalledWith(
       user.email,
       createNewUserMessage(user),
     );

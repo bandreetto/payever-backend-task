@@ -33,6 +33,9 @@ describe('Mailer (e2e)', () => {
       .send(user)
       .expect(201);
 
+    // wait for message consumption
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     expect(sendMailFn).toBeCalled();
   });
 
