@@ -14,10 +14,6 @@ Copy the sample env file and replace the dummy values:
 $ cp .sample.env .env
 ```
 
-## Configuration
-
-Edit `.env` file as needed and restart the server to apply the new variables
-
 ## Running the app
 
 ```bash
@@ -30,6 +26,10 @@ $ yarn run start:dev
 # production mode
 $ yarn run start:prod
 ```
+
+## Configuration
+
+Edit `.env` file as needed and restart the server to apply the new variables
 
 ## Test
 
