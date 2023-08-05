@@ -1,4 +1,4 @@
-import { Injectable, NotImplementedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
 import mongoose, { Connection } from 'mongoose';
 
@@ -28,18 +28,33 @@ export class AvatarService {
 
   async findByUserId(userId: string): Promise<Buffer> {
     let done: () => void;
-    const downloadPromise = new Promise<void>((resolve) => (done = resolve));
-    const readStream = this.avatarBucket.openDownloadStream(
-      new mongoose.Types.ObjectId(userId),
-    );
-    const chunks: Buffer[] = [];
-    readStream.on('end', () => done());
-    readStream.on('data', (data) => chunks.push(data));
-    await downloadPromise;
-    return Buffer.concat(chunks);
+    let fail: (err: Error) => void;
+    const downloadPromise = new Promise<void>((resolve, reject) => {
+      done = resolve;
+      fail = reject;
+    });
+    try {
+      const readStream = this.avatarBucket.openDownloadStream(
+        new mongoose.Types.ObjectId(userId),
+      );
+      const chunks: Buffer[] = [];
+      readStream.on('data', (data) => chunks.push(data));
+      readStream.on('end', () => done());
+      readStream.on('error', (err) => fail(err));
+      await downloadPromise;
+      return Buffer.concat(chunks);
+    } catch (err) {
+      if (
+        err instanceof mongoose.mongo.MongoRuntimeError &&
+        err.message.includes('FileNotFound')
+      ) {
+        return null;
+      }
+      throw err;
+    }
   }
 
   async deleteByUserId(userId: string): Promise<void> {
-    throw new NotImplementedException();
+    return this.avatarBucket.delete(new mongoose.Types.ObjectId(userId));
   }
 }

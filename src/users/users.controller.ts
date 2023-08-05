@@ -6,6 +6,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  NotFoundException,
   NotImplementedException,
   Param,
   Post,
@@ -62,12 +63,15 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   async getAvatar(@Param() params: GetUserParams): Promise<string> {
     const avatar = await this.avatarService.findByUserId(params.id);
+    if (!avatar) {
+      throw new NotFoundException();
+    }
     return avatar.toString('base64');
   }
 
   @Delete(':id/avatar')
   @HttpCode(HttpStatus.OK)
-  async deleteAvatar(@Param() params: GetUserParams): Promise<string> {
-    throw new NotImplementedException();
+  async deleteAvatar(@Param() params: GetUserParams): Promise<void> {
+    return this.avatarService.deleteByUserId(params.id);
   }
 }
