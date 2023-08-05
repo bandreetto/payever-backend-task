@@ -26,13 +26,16 @@ export class AvatarService {
     return uploadPromise;
   }
 
-  findByUserId(userId: string): Promise<Buffer> {
-    let done: (avatar: Buffer) => void;
-    const downloadPromise = new Promise<Buffer>((resolve) => (done = resolve));
+  async findByUserId(userId: string): Promise<Buffer> {
+    let done: () => void;
+    const downloadPromise = new Promise<void>((resolve) => (done = resolve));
     const readStream = this.avatarBucket.openDownloadStream(
       new mongoose.Types.ObjectId(userId),
     );
-    readStream.on('data', (data) => done(data));
-    return downloadPromise;
+    const chunks: Buffer[] = [];
+    readStream.on('end', () => done());
+    readStream.on('data', (data) => chunks.push(data));
+    await downloadPromise;
+    return Buffer.concat(chunks);
   }
 }
