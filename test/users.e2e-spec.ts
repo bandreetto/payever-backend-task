@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
+import { readFile } from 'fs';
 
 describe('Users Controller (e2e)', () => {
   let app: INestApplication;
@@ -40,6 +41,43 @@ describe('Users Controller (e2e)', () => {
       .expect(200);
 
     expect(response.body.id).toBe('1');
+  });
+
+  it('/api/users/:id/avatar (POST)', async () => {
+    const user = {
+      name: 'neo',
+      email: 'neo@matrix.com',
+      job: 'The One',
+    };
+
+    const {
+      body: { id },
+    } = await request(app.getHttpServer())
+      .post('/api/users')
+      .send(user)
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post(`/api/users/${id}/avatar`)
+      .attach('avatar', 'test/resources/NeoTheMatrix.jpg')
+      .expect(201);
+
+    let resolveAvatar: (avatar: string) => void;
+    const avatarPromise = new Promise<string>(
+      (resolve) => (resolveAvatar = resolve),
+    );
+    readFile('resources/NeoTheMatrix.jpg', async (err, data) => {
+      if (err) throw err;
+
+      const avatar = data.toString('base64');
+      resolveAvatar(avatar);
+    });
+    const avatar = await avatarPromise;
+
+    await request(app.getHttpServer())
+      .get(`/api/users/${id}/avatar`)
+      .expect(200)
+      .expect(avatar);
   });
 
   afterAll(async () => {

@@ -5,14 +5,18 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  NotImplementedException,
   Param,
   Post,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { GetUserParams, User } from './contracts';
 import { UsersService } from './users.service';
 import { ReqresService } from '../reqres/reqres.service';
 import { MessagingService } from '../messaging/messaging.service';
 import { Topic } from '../messaging/contracts/enums';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 export class UsersController {
@@ -39,5 +43,13 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   async getUserById(@Param() params: GetUserParams): Promise<User> {
     return this.reqresService.getUserById(params.id);
+  }
+
+  @Post(':id/avatar')
+  @HttpCode(HttpStatus.CREATED)
+  @UseInterceptors(FileInterceptor('avatar'))
+  uploadAvatar(@UploadedFile() avatar: Express.Multer.File) {
+    console.log(avatar);
+    throw new NotImplementedException();
   }
 }

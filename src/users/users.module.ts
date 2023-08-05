@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './contracts';
 import { ReqresModule } from '../reqres/reqres.module';
 import { MessagingModule } from 'src/messaging/messaging.module';
+import { AvatarService } from './avatar/avatar.service';
 
 @Module({
   imports: [
@@ -13,6 +14,6 @@ import { MessagingModule } from 'src/messaging/messaging.module';
     MessagingModule,
   ],
   controllers: [UsersController],
-  providers: [UsersService],
+  providers: [UsersService, AvatarService],
 })
 export class UsersModule {}
